@@ -15,12 +15,17 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  // Daftar halaman yang akan ditampilkan berdasarkan index Navbar
-  final List<Widget> _screens = const [
-    DashboardScreen(),
-    AssessmentScreen(),
-    SimulationScreen(),
-    ProfileScreen(),
+  late final List<Widget> _screens = [
+    const DashboardScreen(),
+    AssessmentScreen(
+      onGoToSimulation: () {
+        setState(() {
+          _selectedIndex = 2;
+        });
+      },
+    ),
+    const SimulationScreen(),
+    const ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -32,14 +37,11 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _screens,
-      ),
+      body: IndexedStack(index: _selectedIndex, children: _screens),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed, 
+        type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.white,
         selectedItemColor: Colors.red.shade700,
         unselectedItemColor: Colors.grey.shade400,
