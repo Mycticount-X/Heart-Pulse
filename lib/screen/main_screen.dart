@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'dashboard_screen.dart';
-import 'assessment_screen.dart';
-import 'simulation_screen.dart';
-import 'profile_screen.dart';
+import 'dashboard_screen.dart';     
+import 'assessment_screen.dart';    
+import 'simulation_screen.dart';    
+import 'profile_screen.dart';       
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -15,19 +15,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  late final List<Widget> _screens = [
-    const DashboardScreen(),
-    AssessmentScreen(
-      onGoToSimulation: () {
-        setState(() {
-          _selectedIndex = 2;
-        });
-      },
-    ),
-    const SimulationScreen(),
-    const ProfileScreen(),
-  ];
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -36,8 +23,21 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> screens = [
+      const DashboardScreen(),
+      AssessmentScreen(
+        onGoToSimulation: () {
+          setState(() {
+            _selectedIndex = 2;
+          });
+        },
+      ),
+      const SimulationScreen(),
+      const ProfileScreen(),
+    ];
+
     return Scaffold(
-      body: IndexedStack(index: _selectedIndex, children: _screens),
+      body: screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
