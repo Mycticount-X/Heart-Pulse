@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'result_screen.dart';
+import '../services/history_services.dart';
 
 class AssessmentScreen extends StatefulWidget {
   final VoidCallback? onGoToSimulation;
@@ -71,6 +72,8 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
 
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
+        await HistoryService.saveHistory(requestData, result);
+
         if (mounted) {
           setState(() => _resultData = result);
         }
