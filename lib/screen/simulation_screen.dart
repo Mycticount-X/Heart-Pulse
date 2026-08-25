@@ -20,7 +20,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
   final _weightCtrl = TextEditingController();
   final _apHiCtrl = TextEditingController();
   final _apLoCtrl = TextEditingController();
-  
+
   int _cholesterol = 1;
   int _gluc = 1;
   int _smoke = 0;
@@ -38,7 +38,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
     setState(() {
       _histories = histories;
       if (_histories.isNotEmpty) {
-        _selectHistory(_histories.first); // Default ke yang terbaru
+        _selectHistory(_histories.first);
       }
     });
   }
@@ -46,7 +46,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
   void _selectHistory(Map<String, dynamic> history) {
     setState(() {
       _selectedHistory = history;
-      _simulatedResult = null; // Reset hasil simulasi jika ganti riwayat
+      _simulatedResult = null;
 
       final req = history['request'];
       _weightCtrl.text = req['weight'].toString();
@@ -65,8 +65,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
     setState(() => _isLoading = true);
 
     final originalReq = _selectedHistory!['request'];
-    
-    // Gabungkan data statis (usia, gender, tinggi) dengan data modifikasi
+
     final simulatedRequest = {
       "age_days": originalReq['age_days'],
       "gender": originalReq['gender'],
@@ -119,7 +118,6 @@ class _SimulationScreenState extends State<SimulationScreen> {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          // Dropdown Pilih Riwayat
           const Text("Pilih Data Dasar (Baseline)", style: TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           DropdownButtonFormField<Map<String, dynamic>>(
@@ -140,11 +138,9 @@ class _SimulationScreenState extends State<SimulationScreen> {
           ),
           const SizedBox(height: 24),
 
-          // Tampilkan Grafik jika sudah ada hasil simulasi
           if (_simulatedResult != null) _buildComparisonChart(),
           if (_simulatedResult != null) const SizedBox(height: 24),
 
-          // Form Modifikasi
           const Text("Ubah Gaya Hidup & Metrik", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           const SizedBox(height: 12),
           Card(
@@ -168,7 +164,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
                     title: const Text("Berhenti Merokok / Tidak Merokok", style: TextStyle(fontSize: 14)),
                     value: _smoke == 0,
                     activeColor: Colors.green,
-                    onChanged: (val) => setState(() => _smoke = val ? 0 : 1), // Dibalik logikanya agar positif
+                    onChanged: (val) => setState(() => _smoke = val ? 0 : 1),
                   ),
                   SwitchListTile(
                     title: const Text("Aktif Berolahraga", style: TextStyle(fontSize: 14)),
@@ -181,7 +177,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          
+
           SizedBox(
             width: double.infinity,
             height: 54,
@@ -192,7 +188,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               onPressed: _isLoading ? null : _runSimulation,
-              child: _isLoading 
+              child: _isLoading
                   ? const CircularProgressIndicator(color: Colors.white)
                   : const Text("Jalankan Simulasi", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             ),
@@ -251,23 +247,34 @@ class _SimulationScreenState extends State<SimulationScreen> {
                   titlesData: FlTitlesData(
                     rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                     topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 40,
+                        getTitlesWidget: (value, meta) {
+                          return Text(
+                            '${value.toInt()}%',
+                            style: const TextStyle(fontSize: 10, color: Colors.grey),
+                          );
+                        },
+                      ),
+                    ),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
                         interval: 2,
                         getTitlesWidget: (value, meta) => Padding(
                           padding: const EdgeInsets.only(top: 8.0),
-                          child: Text('Thn ${value.toInt()}', style: const TextStyle(fontSize: 10)),
+                          child: Text('Thn ${value.toInt()}', style: const TextStyle(fontSize: 10, color: Colors.grey)),
                         ),
                       ),
                     ),
                   ),
                   borderData: FlBorderData(show: false),
-                  minX: 0, maxX: 10, minY: 0, maxY: 100,
+                  minX: 0,
+                  maxX: 10,
                   lineBarsData: [
-                    // Garis Riwayat Asli
                     _buildLineChartBarData(originalTraj, Colors.red.shade300, isDashed: true),
-                    // Garis Hasil Simulasi
                     _buildLineChartBarData(simulatedTraj, Colors.green.shade600, isDashed: false),
                   ],
                 ),
@@ -299,7 +306,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
       color: color,
       barWidth: 4,
       isStrokeCapRound: true,
-      dashArray: isDashed ? [8, 4] : null, 
+      dashArray: isDashed ? [8, 4] : null,
       dotData: const FlDotData(show: true),
     );
   }
